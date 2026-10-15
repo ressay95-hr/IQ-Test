@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Al-Esraa Pharmaceuticals | IQ Assessment</title>
+<style>
+  :root{
+    --maroon:#862626;
+    --maroon-dark:#6a1c1c;
+    --maroon-soft:#f6eaea;
+    --grey:#766b6a;
+    --grey-light:#e9e5e4;
+    --ink:#2b2625;
+    --bg:#faf8f8;
+    --ok:#2e7d4f;
+    --warn:#c98a00;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;background:var(--bg);color:var(--ink);
+       -webkit-user-select:none;user-select:none}
+  input,select{-webkit-user-select:text;user-select:text}
+  .stripes{height:10px;background:repeating-linear-gradient(90deg,var(--maroon) 0 60px,var(--grey) 60px 90px)}
+  header{background:#fff;border-bottom:1px solid var(--grey-light);padding:14px 24px;display:flex;align-items:center;gap:16px}
+  header img{height:64px;width:auto}
+  .wordmark{display:none;line-height:1}
+  .wordmark b{display:block;font-size:28px;letter-spacing:2px;color:var(--maroon);font-weight:800}
+  .wordmark span{font-size:11px;letter-spacing:6px;color:var(--grey)}
+  header h1{font-size:18px;margin:0 0 0 auto;color:var(--grey);font-weight:600}
+  main{max-width:760px;margin:28px auto;padding:0 18px}
+  .card{background:#fff;border:1px solid var(--grey-light);border-radius:14px;padding:28px;box-shadow:0 6px 24px rgba(134,38,38,.06)}
+  h2{margin:0 0 6px;color:var(--maroon)}
+  p.sub{margin:0 0 22px;color:var(--grey)}
+  label{display:block;font-weight:600;font-size:14px;margin:16px 0 6px}
+  input,select{width:100%;padding:12px 14px;border:1.5px solid #cfc8c7;border-radius:10px;font-size:16px;background:#fff;color:var(--ink)}
+  input:focus,select:focus{outline:none;border-color:var(--maroon);box-shadow:0 0 0 3px rgba(134,38,38,.15)}
+  button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:13px 24px;font-weight:700;font-size:16px;transition:.15s}
+  .btn{background:var(--maroon);color:#fff}
+  .btn:hover{background:var(--maroon-dark)}
+  .btn:disabled{background:#c9b7b7;cursor:not-allowed}
+  .btn-ghost{background:var(--grey-light);color:var(--ink)}
+  .btn-ghost:hover{background:#dcd6d5}
+  .row{display:flex;gap:12px;justify-content:space-between;margin-top:26px;align-items:center}
+  .err{color:#b3261e;font-size:14px;margin-top:12px;min-height:18px}
+  .rules{background:var(--maroon-soft);border-left:5px solid var(--maroon);padding:14px 18px;border-radius:8px;margin:18px 0;font-size:15px;line-height:1.55}
+  .rules ul{margin:6px 0 0 18px;padding:0}
+  .hidden{display:none!important}
+
+  /* test screen */
+  #test{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;z-index:10}
+  .topbar{display:flex;align-items:center;gap:18px;padding:10px 22px;background:#fff;border-bottom:1px solid var(--grey-light)}
+  .topbar img{height:44px}
+  .topbar .who{color:var(--grey);font-size:14px}
+  .timer{margin-left:auto;font-variant-numeric:tabular-nums;font-size:26px;font-weight:800;color:var(--maroon);
+         background:var(--maroon-soft);padding:6px 16px;border-radius:10px}
+  .timer.low{background:var(--maroon);color:#fff;animation:pulse 1s infinite}
+  @keyframes pulse{50%{opacity:.7}}
+  .viol{font-size:13px;color:var(--grey);border:1.5px solid var(--grey-light);border-radius:10px;padding:6px 12px}
+  .viol b{color:var(--maroon)}
+  .progress{height:6px;background:var(--grey-light)}
+  .progress div{height:100%;background:var(--maroon);width:0;transition:width .3s}
+  .testbody{flex:1;overflow:auto;padding:26px 18px}
+  .qwrap{max-width:780px;margin:0 auto}
+  .qnum{color:var(--grey);font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+  .qtext{font-size:22px;line-height:1.45;margin:8px 0 22px;font-weight:600}
+  .opt{display:flex;align-items:center;gap:14px;border:2px solid var(--grey-light);background:#fff;border-radius:12px;
+       padding:15px 18px;margin-bottom:12px;cursor:pointer;font-size:18px}
+  .opt:hover{border-color:#c9a5a5}
+  .opt.sel{border-color:var(--maroon);background:var(--maroon-soft)}
+  .opt .dot{width:30px;height:30px;border-radius:50%;background:var(--grey-light);display:grid;place-items:center;font-weight:800;font-size:14px;flex:none;color:var(--grey)}
+  .opt.sel .dot{background:var(--maroon);color:#fff}
+  .palette{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+  .palette button{width:38px;height:38px;padding:0;border-radius:8px;background:#fff;border:2px solid var(--grey-light);font-size:14px;color:var(--grey)}
+  .palette button.done{background:var(--grey);color:#fff;border-color:var(--grey)}
+  .palette button.cur{border-color:var(--maroon);color:var(--maroon);background:#fff;box-shadow:0 0 0 2px rgba(134,38,38,.2)}
+  .palette button.done.cur{background:var(--maroon);color:#fff}
+
+  /* violation overlay */
+  #lock{position:fixed;inset:0;background:rgba(106,28,28,.97);color:#fff;z-index:50;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
+  #lock .box{max-width:520px}
+  #lock h2{color:#fff;font-size:30px}
+  #lock p{font-size:17px;line-height:1.55}
+  #lock .btn{background:#fff;color:var(--maroon);margin-top:12px}
+  #lock .t{font-size:15px;opacity:.85;margin-top:18px}
+
+  .done-card{text-align:center;padding:40px 28px}
+  .done-card .tick{width:76px;height:76px;border-radius:50%;background:var(--maroon);color:#fff;display:grid;place-items:center;font-size:40px;margin:0 auto 14px}
+  footer{text-align:center;color:var(--grey);font-size:12px;padding:18px}
+</style>
+</head>
+<body>
+
+<!-- ===== REGISTRATION ===== -->
+<section id="reg">
+  <div class="stripes"></div>
+  <header>
+    <img src="logo.png" alt="Al-Esraa Pharmaceuticals" onerror="this.style.display='none';document.getElementById('wm1').style.display='block'">
+    <div class="wordmark" id="wm1"><b>ALESRAA</b><span>PHARMACEUTICALS</span></div>
+    <h1>Candidate IQ Assessment</h1>
+  </header>
+  <main>
+    <div class="card" id="step1">
+      <h2>Welcome</h2>
+      <p class="sub">Please enter your details to begin.</p>
+
+      <label for="email">Email</label>
+      <input id="email" type="email" placeholder="name@example.com" autocomplete="email">
+
+      <label for="dept">Department Applied For</label>
+      <select id="dept">
+        <option value="">— Select a department —</option>
+        <option>Production</option>
+        <option>Quality Control</option>
+        <option>Quality Assurance</option>
+        <option>Engineering</option>
+        <option>R&amp;D</option>
+        <option>Supply Chain</option>
+        <option>HR</option>
+        <option>IT</option>
+        <option>Finance</option>
+        <option>Process Optimization</option>
+      </select>
+
+      <label for="pos">Position Applied For</label>
+      <input id="pos" type="text" placeholder="e.g. Production Supervisor" maxlength="80">
+
+      <div class="err" id="err1"></div>
+      <div class="row"><span></span><button class="btn" id="next1">Next</button></div>
+    </div>
+
+    <div class="card hidden" id="step2">
+      <h2>Candidate Name</h2>
+      <p class="sub">Enter your full name as it appears on your ID.</p>
+      <label for="name">Full Name</label>
+      <input id="name" type="text" placeholder="Full name" maxlength="80" autocomplete="name">
+
+      <div class="rules">
+        <b>Before you start — please read:</b>
+        <ul>
+          <li>The test has <b>15 questions</b> and a <b>20-minute</b> timer. The timer cannot be paused.</li>
+          <li>The test opens in <b>full screen automatically</b>. Do not exit full screen.</li>
+          <li><b>Switching tabs or windows, or leaving full screen, is recorded as cheating</b> and reported to HR.</li>
+          <li>Copy, paste, right-click and developer tools are disabled and monitored.</li>
+          <li>Close all other apps and tabs now. Use a desktop or laptop.</li>
+        </ul>
+      </div>
+      <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500">
+        <input type="checkbox" id="agree" style="width:20px;height:20px;margin-top:2px">
+        <span>I have read and accept these conditions.</span>
+      </label>
+
+      <div class="err" id="err2"></div>
+      <div class="row">
+        <button class="btn-ghost" id="back2">Back</button>
+        <button class="btn" id="start">Start Test</button>
+      </div>
+    </div>
+  </main>
+  <footer>© Al-Esraa Pharmaceuticals — Recruitment</footer>
+</section>
+
+<!-- ===== TEST ===== -->
+<section id="test" class="hidden">
+  <div class="topbar">
+    <img src="logo.png" alt="" onerror="this.style.display='none'">
+    <div class="who" id="who"></div>
+    <div class="viol">Violations: <b id="vcount">0</b></div>
+    <div class="timer" id="timer">20:00</div>
+  </div>
+  <div class="progress"><div id="bar"></div></div>
+  <div class="testbody">
+    <div class="qwrap">
+      <div class="qnum" id="qnum"></div>
+      <div class="qtext" id="qtext"></div>
+      <div id="opts"></div>
+      <div class="row">
+        <button class="btn-ghost" id="prev">Previous</button>
+        <button class="btn" id="nextq">Next</button>
+      </div>
+      <div class="palette" id="palette"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== VIOLATION LOCK ===== -->
+<div id="lock" class="hidden">
+  <div class="box">
+    <h2>⚠ Violation recorded</h2>
+    <p id="lockmsg"></p>
+    <p>This has been logged and will be reported to the recruitment team. The timer is still running.</p>
+    <button class="btn" id="resume">Return to full screen</button>
+    <div class="t" id="locktime"></div>
+  </div>
+</div>
+
+<!-- ===== FINISHED ===== -->
+<section id="fin" class="hidden">
+  <div class="stripes"></div>
+  <header>
+    <img src="logo.png" alt="" onerror="this.style.display='none';document.getElementById('wm2').style.display='block'">
+    <div class="wordmark" id="wm2"><b>ALESRAA</b><span>PHARMACEUTICALS</span></div>
+  </header>
+  <main>
+    <div class="card done-card">
+      <div class="tick">✓</div>
+      <h2>Thank you!</h2>
+      <p class="sub" id="finmsg">Your answers have been submitted. Our recruitment team will contact you.</p>
+      <p class="sub">You may now close this window.</p>
+    </div>
+  </main>
+</section>
+
+<script>
+/* =========================================================
+   CONFIG — paste your Apps Script Web App URL below
+   ========================================================= */
+const API_URL = "https://script.google.com/macros/s/AKfycbyqa2yhTa4EpQz7OsUKrdK-qEmESJEkSrrpYuxNhL6VZ3o40Nx4d2clL1gTeip1S49EjQ/exec";
+const DURATION_SEC = 20 * 60;
+
+/* Questions (answer key is NOT here — scoring happens on the server) */
+const QUESTIONS = [
+ {id:1,  q:"Which one of the following choices makes the best comparison?\nLIVED is to DEVIL as 6323 is to:", o:{A:"3623",B:"3263",C:"3236",D:"3632"}},
+ {id:2,  q:"Take 2 apples from 3 apples. What do you have?", o:{A:"1 apple",B:"2 apples",C:"3 apples",D:"None"}},
+ {id:3,  q:"Which number should come next?\n144, 121, 100, 81, 64, ?", o:{A:"54",B:"43",C:"49",D:"41"}},
+ {id:4,  q:"Divide 30 by half and add ten. What do you get?", o:{A:"70",B:"25",C:"15",D:"10"}},
+ {id:5,  q:"Some months have 30 days, some months have 31 days. How many months have 28 days?", o:{A:"2",B:"12",C:"None",D:"Only February"}},
+ {id:6,  q:"NASA received three messages in a strange language from a distant planet. The scientists studied the messages and found that \"Necor Buldon Slock\" means \"Danger Rocket Explosion\", \"Edwan Mynor Necor\" means \"Danger Spaceship Fire\" and \"Buldon Gimilzor Gondor\" means \"Bad Gas Explosion\". What does \"Slock\" mean?", o:{A:"Explosion",B:"Danger",C:"Gas",D:"Rocket"}},
+ {id:7,  q:"If you had only one match and entered a COLD and DARK room, where there was an oil heater, an oil lamp and a candle, which would you light first?", o:{A:"Oil heater",B:"Candle",C:"Oil lamp",D:"Match"}},
+ {id:8,  q:"A farmer had 17 sheep. All but 9 died. How many live sheep were left?", o:{A:"7",B:"8",C:"12",D:"9"}},
+ {id:9,  q:"I went to bed at 8 o'clock in the evening and wound up my clock and set the alarm to sound at 9 o'clock in the morning. How many hours of sleep would I get before being awoken by the alarm?", o:{A:"13 hours",B:"12 hours",C:"1 hour",D:"10 hours"}},
+ {id:10, q:"A boy is 4 years old and his sister is three times as old as he is. When the boy is 12 years old, how old will his sister be?", o:{A:"19",B:"20",C:"21",D:"Impossible to determine"}},
+ {id:11, q:"Inept is the opposite of:", o:{A:"Adroit",B:"Skillful",C:"Exert",D:"Expert"}},
+ {id:12, q:"John likes 400 but not 300; he likes 100 but not 99; he likes 2500 but not 2400. Which does he like?", o:{A:"800",B:"1800",C:"900",D:"200"}},
+ {id:13, q:"What number is one half of one quarter of one tenth of 800?", o:{A:"20",B:"10",C:"15",D:"12"}},
+ {id:14, q:"If a doctor gives you 3 pills and tells you to take one pill every half hour, how long would it be before all the pills had been taken?", o:{A:"3 hours",B:"2.5 hours",C:"1 hour",D:"1.5 hours"}},
+ {id:15, q:"HAND is to Glove as HEAD is to:", o:{A:"Hair",B:"Nape",C:"Head",D:"Scalp"}}
+];
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const fmt = s => String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+
+async function api(payload, opts={}){
+  const res = await fetch(API_URL, {
+    method:"POST",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},   // avoids CORS preflight with Apps Script
+    body:JSON.stringify(payload),
+    keepalive: !!opts.keepalive
+  });
+  return res.json();
+}
+
+/* ---------- state ---------- */
+const S = {
+  email:"", dept:"", pos:"", name:"",
+  sessionId:null, order:[], optOrder:{}, answers:{}, cur:0,
+  startedAt:0, running:false, submitted:false,
+  counts:{tab:0, fullscreen:0, focus:0, input:0},
+  log:[], lastEventAt:0
+};
+const totalViolations = () => S.counts.tab + S.counts.fullscreen + S.counts.focus + S.counts.input;
+
+/* ---------- registration ---------- */
+$("next1").onclick = () => {
+  const email = $("email").value.trim(), dept = $("dept").value, pos = $("pos").value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return $("err1").textContent = "Please enter a valid email address.";
+  if (!dept) return $("err1").textContent = "Please select the department you applied for.";
+  if (pos.length < 2) return $("err1").textContent = "Please enter the position you applied for.";
+  $("err1").textContent = "";
+  Object.assign(S,{email,dept,pos});
+  $("step1").classList.add("hidden"); $("step2").classList.remove("hidden");
+  $("name").focus();
+};
+$("back2").onclick = () => { $("step2").classList.add("hidden"); $("step1").classList.remove("hidden"); };
+
+$("start").onclick = async () => {
+  const name = $("name").value.trim();
+  if (name.split(/\s+/).length < 2) return $("err2").textContent = "Please enter your full name (first and last).";
+  if (!$("agree").checked) return $("err2").textContent = "You must accept the conditions to continue.";
+  if (!document.documentElement.requestFullscreen) return $("err2").textContent = "This device/browser does not support full screen. Please use Chrome, Edge or Firefox on a desktop or laptop.";
+  if (API_URL.startsWith("PASTE")) return $("err2").textContent = "Setup incomplete: API_URL has not been configured.";
+  S.name = name; $("err2").textContent = "";
+  $("start").disabled = true; $("start").textContent = "Starting…";
+
+  // Fullscreen MUST be requested directly from this click (user gesture)
+  try { await document.documentElement.requestFullscreen({navigationUI:"hide"}); }
+  catch(e){ $("start").disabled=false; $("start").textContent="Start Test"; return $("err2").textContent = "Full screen was blocked. Please allow it and try again."; }
+
+  try{
+    const r = await api({action:"start", name:S.name, email:S.email, dept:S.dept, position:S.pos,
+                         ua:navigator.userAgent, screen:screen.width+"x"+screen.height,
+                         multiMonitor: (window.screen && window.screen.isExtended) ? "YES" : "no"});
+    if (!r.ok) throw new Error(r.error || "Could not start.");
+    S.sessionId = r.sessionId;
+  }catch(e){
+    if (document.fullscreenElement) document.exitFullscreen();
+    $("start").disabled=false; $("start").textContent="Start Test";
+    return $("err2").textContent = e.message || "Connection problem. Please try again.";
+  }
+  beginTest();
+};
+
+/* ---------- test ---------- */
+function beginTest(){
+  S.order = shuffle(QUESTIONS.map((_,i)=>i));
+  QUESTIONS.forEach(q => S.optOrder[q.id] = shuffle(["A","B","C","D"]));
+  S.startedAt = Date.now(); S.running = true;
+  $("reg").classList.add("hidden"); $("test").classList.remove("hidden");
+  $("who").textContent = S.name + " · " + S.dept;
+  buildPalette(); renderQ(); tick(); S.timerId = setInterval(tick, 500);
+  armMonitoring();
+}
+
+function tick(){
+  const left = Math.max(0, DURATION_SEC - Math.floor((Date.now()-S.startedAt)/1000));
+  $("timer").textContent = fmt(left);
+  $("timer").classList.toggle("low", left <= 120);
+  if (left <= 0 && !S.submitted) submit("Time expired");
+}
+
+function buildPalette(){
+  $("palette").innerHTML = "";
+  S.order.forEach((qi,pos)=>{
+    const b = document.createElement("button"); b.textContent = pos+1;
+    b.onclick = () => { S.cur = pos; renderQ(); };
+    $("palette").appendChild(b);
+  });
+}
+function renderQ(){
+  const q = QUESTIONS[S.order[S.cur]];
+  $("qnum").textContent = `Question ${S.cur+1} of ${QUESTIONS.length}`;
+  $("qtext").innerHTML = q.q.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/\n/g,"<br>");
+  const box = $("opts"); box.innerHTML = "";
+  S.optOrder[q.id].forEach((letter,i)=>{
+    const d = document.createElement("div");
+    d.className = "opt" + (S.answers[q.id]===letter ? " sel" : "");
+    d.innerHTML = `<span class="dot">${"ABCD"[i]}</span><span></span>`;
+    d.lastChild.textContent = q.o[letter];
+    d.onclick = () => { S.answers[q.id] = letter; renderQ(); };
+    box.appendChild(d);
+  });
+  [...$("palette").children].forEach((b,i)=>{
+    b.className = (S.answers[QUESTIONS[S.order[i]].id] ? "done " : "") + (i===S.cur ? "cur" : "");
+  });
+  $("bar").style.width = (Object.keys(S.answers).length/QUESTIONS.length*100)+"%";
+  $("prev").style.visibility = S.cur===0 ? "hidden" : "visible";
+  $("nextq").textContent = S.cur===QUESTIONS.length-1 ? "Submit Test" : "Next";
+}
+$("prev").onclick = () => { if (S.cur>0){S.cur--; renderQ();} };
+$("nextq").onclick = () => {
+  if (S.cur < QUESTIONS.length-1){ S.cur++; renderQ(); return; }
+  const un = QUESTIONS.length - Object.keys(S.answers).length;
+  if (un>0 && !confirm(`You have ${un} unanswered question(s). Submit anyway?`)) return;
+  submit("Completed");
+};
+
+/* ---------- cheating detection ---------- */
+function violation(type, detail){
+  if (!S.running || S.submitted) return;
+  const now = Date.now();
+  // One physical action (e.g. Alt+Tab) fires blur + visibilitychange + fullscreenchange.
+  // Merge anything within 1.5s into a single violation, keeping the most specific type.
+  const rank = {fullscreen:3, tab:2, focus:1, input:0};
+  const last = S.log[S.log.length-1];
+  if (last && type !== "input" && last.type !== "input" && now - last.t < 1500){
+    if (rank[type] > rank[last.type]) {
+      S.counts[last.type]--; S.counts[type]++; last.type = type; last.detail = detail;
+      sendEvent(last, true);
+    }
+    return;
+  }
+  S.counts[type]++;
+  const ev = {t:now, type, detail, at:new Date(now).toLocaleTimeString("en-GB"), n:totalViolations()};
+  S.log.push(ev);
+  $("vcount").textContent = totalViolations();
+  sendEvent(ev, false);
+  if (type !== "input") showLock(type, detail);
+}
+function sendEvent(ev, isUpdate){
+  api({action:"event", sessionId:S.sessionId, counts:S.counts, total:totalViolations(),
+       log:S.log.map(e=>`#${e.n} ${e.at} ${labelOf(e.type)} – ${e.detail}`)}, {keepalive:true}).catch(()=>{});
+}
+const labelOf = t => ({tab:"TAB SWITCH", fullscreen:"EXIT FULLSCREEN", focus:"WINDOW FOCUS LOST", input:"BLOCKED INPUT"})[t];
+
+function showLock(type, detail){
+  const msgs = {
+    fullscreen:"You exited full screen mode.",
+    tab:"You switched to another tab or window.",
+    focus:"The test window lost focus."
+  };
+  $("lockmsg").textContent = msgs[type] + ` Total violations so far: ${totalViolations()}.`;
+  $("lock").classList.remove("hidden");
+}
+$("resume").onclick = async () => {
+  try { if (!document.fullscreenElement) await document.documentElement.requestFullscreen({navigationUI:"hide"}); } catch(e){}
+  if (document.fullscreenElement) $("lock").classList.add("hidden");
+};
+
+function armMonitoring(){
+  document.addEventListener("visibilitychange", () => { if (document.hidden) violation("tab","Page hidden / tab switched"); });
+  window.addEventListener("blur", () => setTimeout(()=>{ if (!document.hasFocus()) violation("focus","Window lost focus"); }, 250));
+  document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement) violation("fullscreen","Left full screen"); });
+  window.addEventListener("pagehide", () => { if (!S.submitted && S.running) violation("tab","Page unloaded / closed"); });
+  window.addEventListener("beforeunload", e => { if (!S.submitted){ e.preventDefault(); e.returnValue=""; } });
+
+  ["copy","cut","paste","contextmenu","dragstart","selectstart"].forEach(ev =>
+    document.addEventListener(ev, e => {
+      if (e.target.closest && e.target.closest("input,select")) return;
+      e.preventDefault(); if (ev!=="selectstart") violation("input", ev+" attempt");
+    }));
+  document.addEventListener("keydown", e => {
+    const k = e.key.toLowerCase();
+    const bad = e.key==="F12" || e.key==="PrintScreen" || e.key==="F5" ||
+      (e.ctrlKey||e.metaKey) && ["c","v","x","a","p","s","u","f","r"].includes(k) ||
+      (e.ctrlKey||e.metaKey) && e.shiftKey && ["i","j","c","s"].includes(k) ||
+      (e.altKey && e.key==="Tab") || e.key==="Meta" || e.key==="OS";
+    if (bad){ e.preventDefault(); violation("input","Key: "+(e.ctrlKey?"Ctrl+":"")+(e.shiftKey?"Shift+":"")+(e.altKey?"Alt+":"")+e.key); }
+  });
+  // Developer tools heuristic (docked devtools shrinks the viewport)
+  setInterval(() => {
+    if (!S.running) return;
+    if (window.outerWidth - window.innerWidth > 200 || window.outerHeight - window.innerHeight > 200)
+      violation("input","Possible developer tools / window resize");
+  }, 2000);
+}
+
+/* ---------- submit ---------- */
+async function submit(reason){
+  if (S.submitted) return;
+  S.submitted = true; S.running = false; clearInterval(S.timerId);
+  $("lock").classList.add("hidden");
+  if (document.fullscreenElement) { try{ await document.exitFullscreen(); }catch(e){} }
+  $("test").classList.add("hidden"); $("fin").classList.remove("hidden");
+  $("finmsg").textContent = "Submitting your answers…";
+  const payload = {action:"submit", sessionId:S.sessionId, answers:S.answers, reason,
+    counts:S.counts, total:totalViolations(),
+    log:S.log.map(e=>`#${e.n} ${e.at} ${labelOf(e.type)} – ${e.detail}`),
+    clientElapsedSec:Math.round((Date.now()-S.startedAt)/1000)};
+  for (let i=0;i<4;i++){
+    try{
+      const r = await api(payload);
+      if (r.ok){ $("finmsg").textContent = "Your answers have been submitted. Our recruitment team will contact you."; return; }
+    }catch(e){}
+    await new Promise(r=>setTimeout(r, 1500*(i+1)));
+  }
+  $("finmsg").textContent = "We could not confirm your submission. Please do NOT close this page — tell the recruiter.";
+}
+</script>
+</body>
+</html>
